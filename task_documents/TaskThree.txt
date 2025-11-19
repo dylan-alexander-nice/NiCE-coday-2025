@@ -1,0 +1,54 @@
+The Longest Story of the NiCE Realm
+
+Keytara always loved books. They told stories, they held knowledge, 
+laughter, and power. She spent hours in the Library of the NiCE Realm 
+every day since her childhood. Books were all around her; she could travel the maze of bookshelves endlessly.
+
+Keytara could turn left and find books about the sea and travel, 
+turn right— and find a love story that made her heart warm.
+
+Her mother was the Librarian, and soon it would be Keytara's turn to become 
+guardian of knowledge. But to become one, she must tell her mother a 
+single number: the Number of the Longest Story.
+
+Many books mentioned other books, either by quote or subtle reference. 
+Keytara, like any Librarian before her, created her own catalogue in which she put 
+all the references between books that she could find. She decided to use the number 
+of letters in each reference as a measure of connection between books.
+
+‘The more letters, the stronger the connection,’ she thought. 
+‘And if the Book of Pirates has a quote from the Book of Treasures, 
+it does not mean that the Book of Treasures references the Book of Pirates.’ 
+She continued to ponder her catalogue.
+
+‘So, to find the Longest Story, I will have to follow references between books in my catalogue. 
+But how exactly? I have already tried to move through each and every reference—and it takes too 
+long and never tells a proper story. But… what if I always move between books, but each next 
+reference is stronger?’ Keytara’s thoughts rushed; she felt that she was onto something.
+
+‘Yes, yes, it will work! The Book of Pirates has thirty words that mention the Book of Treasures. 
+The Book of Treasures also mentions the Book of Alchemy, but the quote is only twenty-five words. 
+Should I read a book that has a weaker connection? No, the Longest Story cannot be built on such a 
+loose connection—it should only become stronger. I will call it the Rule of Ever-growing Connection.’
+
+Keytara looked into her catalogue. The Book of Alchemy referenced the Book of Transmutation, but this 
+reference in her catalogue was a couple of pages earlier. ‘No, I shouldn’t move back in my catalogue as well. 
+All stories move forward, even if they seem to move back. I will call it the Rule of Only Forward!’ 
+She chuckled, imagining herself as captain of a ship, yelling this as a command to her crew.
+
+‘Sometimes, I will have to read the same book multiple times. But that's all right—I love books.’ Keytara was 
+ready to start her pursuit immediately but stopped, thinking.
+
+‘Of course! It is simply the story which contains the maximum number of references between books while also 
+following my Rule of Only Forward and Rule of Ever-growing Connection! 
+I just need to say a number of those references!’
+
+Example:
+6 (Number of books, 1.. 100000) 5 (Number of references 1.. 100000)
+1 (Book with reference, 1.. number of books, inclusive) 2 (Book which is referenced, 1.. number of books, inclusive) 1 (Number of words in reference, 0.. 100000, inclusive)
+2 3 2
+3 4 3
+5 4 10
+4 6 11
+
+Output: 4
