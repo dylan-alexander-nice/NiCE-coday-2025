@@ -3,64 +3,97 @@ Task Two solution module - Master Artificer and Harmonized Crystals.
 
 Problem: Find the longest "Harmonized Group" in crystal arrays.
 
-A Harmonized Group must:
-1. Be a palindrome (reads same forwards and backwards)
-2. Use at most 2 distinct crystal types
-3. Be formed by removing crystals (subsequence, not substring)
-4. Have structure: [k crystals of type A] + [middle] + [k crystals of type A]
+A Harmonized Group has EXACTLY this structure:
+- Part 1: k crystals of type A (homogeneous)
+- Part 2: m crystals of type B (homogeneous, can be 0 crystals)
+- Part 3: k crystals of type A (homogeneous, same count and type as Part 1)
+
+Constraints:
+- At most 2 distinct types total (A and B, where A can equal B)
+- Must be a subsequence (can remove crystals, not rearrange)
+- Pattern: A^k B^m A^k where k >= 1, m >= 0
 
 Example: [90, 100, 90, 100, 36, 100]
-Answer: 3 (subsequence "90, 100, 90" is palindrome with 2 types)
+Answer: 3 (subsequence "90, 100, 90" = A B A where A=90, B=100, k=1, m=1)
 """
 
 
-def longest_palindrome_subsequence(arr: list[int], type1: int, type2: int) -> int:
+def find_harmonized_group_length(arr: list[int], typeA: int, typeB: int) -> int:
     """
-    Find longest palindromic subsequence using only type1 and type2 crystals.
+    Find longest harmonized group with pattern A^k B^m A^k.
     
-    Uses dynamic programming approach:
-    - Filter array to only include allowed types
-    - Find longest palindromic subsequence (LPS) in filtered array
+    Strategy:
+    - Count occurrences of typeA and typeB in array
+    - Try all possible values of k (parts 1 & 3) and m (part 2)
+    - For each (k, m), check if we can form the pattern as a subsequence
     
     Args:
         arr: Array of crystal identifiers
-        type1: First allowed crystal type
-        type2: Second allowed crystal type
+        typeA: Type for parts 1 and 3
+        typeB: Type for part 2 (middle)
         
     Returns:
-        Length of longest palindromic subsequence
+        Length of longest harmonized group (2k + m)
     """
-    # Filter to only crystals of allowed types
-    filtered = [x for x in arr if x == type1 or x == type2]
+    n = len(arr)
     
-    if len(filtered) == 0:
-        return 0
+    # Precompute: For each position, count how many of typeA/typeB we've seen
+    count_A = [0] * (n + 1)  # count_A[i] = number of typeA in arr[0:i]
+    count_B = [0] * (n + 1)
     
-    n = len(filtered)
-    
-    # DP table: dp[i][j] = length of LPS in filtered[i:j+1]
-    dp = [[0] * n for _ in range(n)]
-    
-    # Every single crystal is a palindrome of length 1
     for i in range(n):
-        dp[i][i] = 1
+        count_A[i + 1] = count_A[i] + (1 if arr[i] == typeA else 0)
+        count_B[i + 1] = count_B[i] + (1 if arr[i] == typeB else 0)
     
-    # Build up for increasing substring lengths
-    for length in range(2, n + 1):  # length of substring
-        for i in range(n - length + 1):
-            j = i + length - 1
+    total_A = count_A[n]
+    total_B = count_B[n]
+    
+    max_length = 0
+    
+    # Try all possible k values (for parts 1 and 3)
+    max_k = total_A // 2  # Need at least 2k instances of typeA
+    
+    for k in range(1, max_k + 1):
+        # For this k, find the best position to split into part1, part2, part3
+        # We need: k of typeA, then some of typeB, then k of typeA
+        
+        # Try different split points
+        # Part 1 ends at position end1 (has k instances of typeA)
+        # Part 2 ends at position end2 (has m instances of typeB)
+        # Part 3 ends at position n (has k instances of typeA)
+        
+        # Find earliest position where we have k instances of typeA
+        end1 = -1
+        for i in range(n + 1):
+            if count_A[i] >= k:
+                end1 = i
+                break
+        
+        if end1 == -1:
+            continue
+        
+        # From end1 onwards, we need k more instances of typeA for part 3
+        remaining_A_needed = k
+        remaining_A_available = total_A - k
+        
+        if remaining_A_available < remaining_A_needed:
+            continue
+        
+        # Try different amounts of typeB in the middle (m)
+        for end2 in range(end1, n + 1):
+            # Count typeB between end1 and end2 (part 2)
+            m = count_B[end2] - count_B[end1]
             
-            if filtered[i] == filtered[j]:
-                # If ends match, add 2 to the inner subsequence
-                if length == 2:
-                    dp[i][j] = 2
-                else:
-                    dp[i][j] = dp[i + 1][j - 1] + 2
-            else:
-                # If ends don't match, take max of excluding one end
-                dp[i][j] = max(dp[i + 1][j], dp[i][j - 1])
+            # Count typeA between end2 and n (potential part 3)
+            typeA_in_part3 = count_A[n] - count_A[end2]
+            
+            # Check if we have enough typeA for part 3
+            if typeA_in_part3 >= k:
+                # Valid pattern: k typeA + m typeB + k typeA
+                length = 2 * k + m
+                max_length = max(max_length, length)
     
-    return dp[0][n - 1]
+    return max_length
 
 
 def find_longest_harmonized_group(crystals: list[int]) -> int:
@@ -68,9 +101,10 @@ def find_longest_harmonized_group(crystals: list[int]) -> int:
     Find the longest harmonized group in a crystal array.
     
     Strategy:
-    1. Try all possible pairs of crystal types (including same type)
-    2. For each pair, find longest palindromic subsequence
-    3. Return maximum length found
+    1. Try all possible pairs of crystal types (typeA for outer, typeB for middle)
+    2. For each pair, find longest pattern A^k B^m A^k
+    3. Also try single type: A^k A^m A^k = A^(2k+m)
+    4. Return maximum length found
     
     Args:
         crystals: Array of crystal identifiers
@@ -86,16 +120,17 @@ def find_longest_harmonized_group(crystals: list[int]) -> int:
     
     max_length = 0
     
-    # Try using only 1 type (both type1 and type2 are the same)
+    # Try using only 1 type (A=B, so pattern is just A^k A^m A^k = A^n)
     for crystal_type in unique_types:
-        length = longest_palindrome_subsequence(crystals, crystal_type, crystal_type)
+        length = find_harmonized_group_length(crystals, crystal_type, crystal_type)
         max_length = max(max_length, length)
     
-    # Try all pairs of different types
-    for i, type1 in enumerate(unique_types):
-        for type2 in unique_types[i + 1:]:
-            length = longest_palindrome_subsequence(crystals, type1, type2)
-            max_length = max(max_length, length)
+    # Try all pairs: typeA for outer parts, typeB for middle
+    for typeA in unique_types:
+        for typeB in unique_types:
+            if typeA != typeB:
+                length = find_harmonized_group_length(crystals, typeA, typeB)
+                max_length = max(max_length, length)
     
     return max_length
 
