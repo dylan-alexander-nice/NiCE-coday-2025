@@ -1,5 +1,7 @@
 """Task Three solution module."""
 
+from collections import defaultdict
+
 
 def solve(input_path: str) -> int | str | float:
     """
@@ -7,6 +9,9 @@ def solve(input_path: str) -> int | str | float:
 
     This function reads input from a file, processes it according to the task
     requirements, and returns the computed result.
+
+    Optimized approach using hash maps to avoid O(m²) worst case by grouping
+    references by their source book.
 
     Args:
         input_path: Path to the input file containing test data.
@@ -24,30 +29,32 @@ def solve(input_path: str) -> int | str | float:
 
     # Parse the input
     n, m = map(int, lines[0].split())
+    
+    if m == 0:
+        return 0
+    
+    # Group references by destination book for O(1) lookup
+    # dest_book -> list of (index, word_count) tuples
+    by_dest = defaultdict(list)
     references = []
     
-    for i in range(1, m + 1):
-        book_from, book_to, words = map(int, lines[i].split())
+    for i in range(m):
+        book_from, book_to, words = map(int, lines[i + 1].split())
         references.append((book_from, book_to, words))
+        by_dest[book_to].append((i, words))
     
-    # Dynamic programming approach
-    # dp[i] = maximum chain length ending at reference i
-    # References are processed in catalogue order (order in input file)
-    dp = [1] * m  # Each reference is at least a chain of length 1
+    # Dynamic programming: dp[i] = maximum chain length ending at reference i
+    dp = [1] * m
+    max_length = 1
     
     for i in range(m):
         from_i, to_i, words_i = references[i]
         
-        # Try to extend chains from previous references (earlier in catalogue)
-        for j in range(i):
-            from_j, to_j, words_j = references[j]
-            
-            # Check if we can extend: 
-            # The previous reference's destination book must equal current source book
-            # (we continue reading from where the last reference led us)
-            # AND word count must be strictly increasing
-            if to_j == from_i and words_j < words_i:
+        # Only check references that end at our starting book
+        for j, words_j in by_dest[from_i]:
+            # Must be earlier in catalogue and have fewer words
+            if j < i and words_j < words_i:
                 dp[i] = max(dp[i], dp[j] + 1)
+                max_length = max(max_length, dp[i])
     
-    # Return the maximum chain length
-    return max(dp) if dp else 0
+    return max_length
