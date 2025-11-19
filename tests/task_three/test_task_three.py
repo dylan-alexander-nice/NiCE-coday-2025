@@ -28,5 +28,35 @@ class TestTaskThree:
         inputPath = str(RESOURCES_DIR / "Test3.txt")
         assert solve(inputPath) == expected
 
+    def test_4(self):
+        expected = 1
+        inputPath = str(RESOURCES_DIR / "Test4.txt")
+        assert solve(inputPath) == expected
+    
+    def test_5(self):
+        expected = 4
+        inputPath = str(RESOURCES_DIR / "Test5.txt")
+        assert solve(inputPath) == expected
+
+    def test_6(self):
+        expected = 3
+        inputPath = str(RESOURCES_DIR / "Test6.txt")
+        assert solve(inputPath) == expected
+
+    def test_7(self):
+        expected = 4
+        inputPath = str(RESOURCES_DIR / "Test7.txt")
+        assert solve(inputPath) == expected
+
+    def test_8(self):
+        expected = 2
+        inputPath = str(RESOURCES_DIR / "Test8.txt")
+        assert solve(inputPath) == expected
+
+    def test_9(self):
+        expected = 4
+        inputPath = str(RESOURCES_DIR / "Test9.txt")
+        assert solve(inputPath) == expected
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

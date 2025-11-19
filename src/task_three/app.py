@@ -57,18 +57,14 @@ def solve(input_path: str) -> int | str | float:
         # Update state for book_to
         dest_state = book_state[book_to]
         
-        # Maintain invariant: increasing word_count AND increasing dp_value
-        # Remove entries that would be dominated by this new entry
-        # An entry (w, d) is dominated if w >= words and d <= dp_value
-        while dest_state and dest_state[-1][0] >= words:
-            if dest_state[-1][1] <= dp_value:
-                dest_state.pop()
-            else:
-                # Can't add this entry - it's dominated
-                break
-        else:
-            # Only add if it extends the Pareto frontier
-            if not dest_state or dest_state[-1][1] < dp_value:
-                dest_state.append((words, dp_value))
+        # Maintain Pareto frontier: strictly increasing word_count AND dp_value
+        # Remove entries dominated by (words, dp_value)
+        while dest_state and dest_state[-1][0] >= words and dest_state[-1][1] <= dp_value:
+            dest_state.pop()
+        
+        # Add ONLY if it strictly improves the Pareto frontier
+        # Both word_count AND dp_value must be better than all previous entries
+        if not dest_state or (dest_state[-1][0] < words and dest_state[-1][1] < dp_value):
+            dest_state.append((words, dp_value))
     
     return max_length
