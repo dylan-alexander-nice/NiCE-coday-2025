@@ -1,28 +1,29 @@
 """Tests for Task Two."""
-
 import pytest
-from pathlib import Path
-
 from task_two.app import solve
 
 
 class TestTaskTwo:
-    """Test suite for Task Two."""
+    
+    def test_0(self):
+        expected = [6, 5]
+        inputPath = "Resources/Test0.txt"
+        assert solve(inputPath) == expected
 
-    @pytest.fixture
-    def resources_dir(self) -> Path:
-        """Get the resources directory for Task Two."""
-        return Path(__file__).parent.parent.parent / "src" / "task_two" / "Resources"
+    def test_1(self):
+        expected = [3, 3, 4, 3]
+        inputPath = "Resources/Test1.txt"
+        assert solve(inputPath) == expected
 
-    def test_example_case(self, resources_dir: Path) -> None:
-        """Test Task Two with the example input."""
-        input_path = resources_dir / "Test0.txt"
-        result = solve(str(input_path))
+    def test_2(self):
+        expected = [ 4, 5, 5, 3, 4 ]
+        inputPath = "Resources/Test2.txt"
+        assert solve(inputPath) == expected
 
-        # TODO: Update expected value based on task requirements
-        assert result == 0
+    def test_3(self):
+        expected = [3, 3, 4, 2, 2, 3, 4, 3]
+        inputPath = "Resources/Test3.txt"
+        assert solve(inputPath) == expected
 
-    def test_input_file_exists(self, resources_dir: Path) -> None:
-        """Verify that the test input file exists."""
-        input_path = resources_dir / "Test0.txt"
-        assert input_path.exists(), f"Test input file not found: {input_path}"
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
