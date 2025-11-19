@@ -1,0 +1,15 @@
+# Task One Sample Input
+# 
+# Format: This is a placeholder input file for Task One.
+# Replace this file with the actual input provided during the competition.
+#
+# Expected format (example):
+# Line 1: Number of test cases or input size
+# Line 2-N: Input data (numbers, strings, etc.)
+#
+# Example:
+# 5
+# 1 2 3 4 5
+
+5
+1 2 3 4 5
