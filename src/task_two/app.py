@@ -22,10 +22,10 @@ def find_harmonized_group_length(arr: list[int], typeA: int, typeB: int) -> int:
     """
     Find longest harmonized group with pattern A^k B^m A^k.
     
-    Strategy:
-    - Count occurrences of typeA and typeB in array
-    - Try all possible values of k (parts 1 & 3) and m (part 2)
-    - For each (k, m), check if we can form the pattern as a subsequence
+    OPTIMIZED Strategy:
+    - Special case: typeA == typeB returns total count immediately
+    - Use prefix sums for O(1) range counting
+    - Try all k values to find optimal split
     
     Args:
         arr: Array of crystal identifiers
@@ -37,7 +37,7 @@ def find_harmonized_group_length(arr: list[int], typeA: int, typeB: int) -> int:
     """
     n = len(arr)
     
-    # Precompute: For each position, count how many of typeA/typeB we've seen
+    # Precompute prefix sums for O(1) range queries
     count_A = [0] * (n + 1)  # count_A[i] = number of typeA in arr[0:i]
     count_B = [0] * (n + 1)
     
@@ -47,6 +47,10 @@ def find_harmonized_group_length(arr: list[int], typeA: int, typeB: int) -> int:
     
     total_A = count_A[n]
     total_B = count_B[n]
+    
+    # OPTIMIZATION: If typeA == typeB, entire array is valid (A^n pattern)
+    if typeA == typeB:
+        return total_A
     
     max_length = 0
     
@@ -100,11 +104,11 @@ def find_longest_harmonized_group(crystals: list[int]) -> int:
     """
     Find the longest harmonized group in a crystal array.
     
-    Strategy:
-    1. Try all possible pairs of crystal types (typeA for outer, typeB for middle)
-    2. For each pair, find longest pattern A^k B^m A^k
-    3. Also try single type: A^k A^m A^k = A^(2k+m)
-    4. Return maximum length found
+    OPTIMIZED Strategy:
+    1. Count frequencies and sort types by frequency (most common first)
+    2. Try single types first (may find optimal solution early)
+    3. Try pairs ordered by combined frequency (most promising first)
+    4. Early termination when max reaches array length
     
     Args:
         crystals: Array of crystal identifiers
@@ -115,22 +119,39 @@ def find_longest_harmonized_group(crystals: list[int]) -> int:
     if len(crystals) == 0:
         return 0
     
-    # Get unique crystal types in this array
-    unique_types = list(set(crystals))
+    # Count frequencies for smarter iteration order
+    from collections import Counter
+    freq = Counter(crystals)
+    
+    # Sort by frequency descending (process most common types first)
+    unique_types = sorted(freq.keys(), key=lambda t: freq[t], reverse=True)
     
     max_length = 0
+    n = len(crystals)
     
-    # Try using only 1 type (A=B, so pattern is just A^k A^m A^k = A^n)
+    # Try using only 1 type (A==B, entire count is valid)
     for crystal_type in unique_types:
-        length = find_harmonized_group_length(crystals, crystal_type, crystal_type)
-        max_length = max(max_length, length)
+        count = freq[crystal_type]
+        max_length = max(max_length, count)
+        
+        # Early termination: if one type uses all crystals, we're done
+        if count == n:
+            return count
     
     # Try all pairs: typeA for outer parts, typeB for middle
     for typeA in unique_types:
         for typeB in unique_types:
             if typeA != typeB:
+                # Early termination: if combined freq can't beat current max, skip
+                if freq[typeA] + freq[typeB] <= max_length:
+                    continue
+                
                 length = find_harmonized_group_length(crystals, typeA, typeB)
                 max_length = max(max_length, length)
+                
+                # Early termination: if we found pattern using all crystals
+                if max_length == n:
+                    return max_length
     
     return max_length
 
