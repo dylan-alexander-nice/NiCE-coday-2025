@@ -1,0 +1,27 @@
+In the vast NiCE Realm, a thousand cities shone like pearls on a string But the roads between them were long, and travelers returning from their journeys dreamed of only one thing - the magical Elixir of Energy and Clarity, served in cozy taverns.
+
+The Travelers' Guild and the Builders' Guild joined forces. "We will create a map, as a simple line!" declared the builders. They worked tirelessly and soon every city and every tavern recieved its numerical position on a great linear map, stretching from one end of the realm to the other.
+
+But a question arose: how could they ensure fairness for all? Some travelers boasted of taverns just a stones throw from the city gates while others trudged for leagues. So, the guilds turned to you, Quantus, the master of calculations to find the new standard for distance to tavern.
+
+Elara came to Quantus's tower. "Master," She said "we need a new standard. Find the longest path a traveler must walk from their city to the nearest tavern. That number will be our new maximum, a promise that no one will ever have to travel farther for rest."
+
+Quantus accepted the challenge. From all corners of the realm, messengers brought him scrolls with endless lists of numbers - the positions of every city and tavern.
+
+He didn't just count. Quantus looked at the numbers for cities and the numbers for taverns. "It's so simple" he mused. "Distance is just a difference" He began calculating, finding the distance from each city to its nearest tavern. He saw these distances dance, weaving into a complex pattern of light.
+
+And then he saw it. One distance that was longer than all the others. A long, stretched out line of light representing the most arduous journey in the realm. "This was it." he whispered. This was the key. This was the single value showed where the need was greatest.
+
+He summoned elara. Instead of a long speech, he simply raised his hand and a single large number appeared in his palm (picture shows him holding a 9). This is the value you seek.
+
+The guilds started to follow this new rule, and a wave of contentment washed over the realm. Adventurers, with taverns now within a reasonable distance, were more rested and efficient. The cities flourished, their heros returning with greater tales and treasures. This new approach brought a new found balance to the NiCE realm.
+
+And in his tower, Quantus looked out at the glowing line of the realm, now dotted with new points of light in the darkest spaces. He knew that sometimes progress comes from finding the biggest problem and solving it first. A single, large number that brought great comfort to an entire realm (picture of Quantus holding a 5)
+
+Example:
+10 (Number of cities, 1..10^5, inclusive)
+1 1 2 2 2 4 4 6 7 9 (Locations of cities, -10^9... 10^9 each, inclusive)
+10 (Number of taverns, 1..10^5, inclusive)
+0 1 3 3 3 6 7 8 9 10 (Locations of taverns, -10^9... 10^9 each, inclusive)
+
+Output: 1

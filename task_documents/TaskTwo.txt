@@ -1,0 +1,67 @@
+Elomar is Master Artificer and he
+creates the best artifacts in the whole
+NiCE Realm. The secret of his craft is
+Magic Source, made of harmonized
+crystal formations that grow in secret
+cavern under his tower.
+
+Elomar is old. And he decided that it is time to hire 
+new apprentice to whom he will pass all the secrets. 
+It is you, young Artificer.
+
+Elomar leads to the secret cavern and shows beautiful crystals that are
+forming long arrays. Crystals has different colors and forms; 
+they emanate different magic aura. You think it is complete chaos. They are completely different!
+
+But Elomar explained you that through years he categorized all of them and depending 
+on their characteristics, gave them numbers in his Book of Crystals. 
+"It appears that characteristics of each crystal are not that important. Their harmony is important!" - Elomar said.
+
+"What is harmony?" - you asked. "Well, I discovered, that harmony can only exist when group of crystals is symmetric. 
+See, how they grow in a row?". And you looked. Indeed, all crystals grow in row, like single line.
+
+"First of all, when you prepare Magic Source, you must never rearrange them. 
+These formations are very fragile. You can just carefully remove some crystals" - Elomar continued. 
+"But what crystals should I remove?" - you asked. "That's the interesting part! 
+Harmonized group consists of 3 parts! Each part contains only single type of crystal. 
+And never! You hear me? Never use more than two different types of crystals in the 
+whole Harmonized Group of Crystals" - explained Master Artificer.
+
+“But how long those groups can be?” – you asked, confused.
+“Each group can have zero or more crystals” – answered Elomar.
+“But groups one and three must contain same number of crystals of the same type.
+Group two may have zero or more crystals”.
+
+“But where is the symmetry here?” – you asked.
+“Oh, youth and energy” – Elomar smiled.
+“Write the numbers of crystal from my Book of Crystals on the piece of paper. Then, when you read them from left to right and right to left, they should be the same!”
+“So, if I take this” – you point to beautiful blue crystal.
+“596 its number is” – said Elomar.
+“So, if I write on the paper and read backwards it will be 695?” – you asked.
+“Of course, not” – answered Elomar with smile.
+“It always remains 596. Order of crystals is what important”.
+
+“So, to maximize power of Magic Source, I should remove crystals that ruin Harmony” – you are starting to understand what Master Artificer means.
+“Exactly. And the true power of Magic Source is equal to the length of the longest possible Harmonized Group of Crystals. This is the secret”.
+“And you do it manually?” – you asked, terrified.
+
+“This is the way. How would you do this otherwise?” – now it was time for Elomar to be confused.
+“I will create a machine in which you can put multiple Crystalline Arrays. And machine will just tell what power each of them has, by finding the longest Harmonized Group!”.
+“Ambitious. But is that even possible?” – Elomar asked.
+“Of course it is! Just give some time and I can do anything!” – you answered.
+“You’ll enter to a machine a number of Crystalline Arrays and the put arrays in it and it will do the rest!”.
+Elomar led you to his workshop. It is time to work.
+
+
+Example:
+4 <- Number of Crystalline Arrays, 1..10^4 inclusive
+6 <- Number of Crystals in this array, 1..200000, inclusive
+90 100 90 100 36 100 <- Idenficatiors of Crystals 1..200, inclusive (Sum of lengths of all crystalline Arrays is 1..200000)
+6 
+37 46 68 13 46 46 
+6 
+177 55 177 177 55 55 
+6 
+92 86 86 97 97 97
+
+Output: [3, 3, 4, 3] (Lengths of longest harmonized group in each of the crystal arrays)
