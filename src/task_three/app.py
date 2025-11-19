@@ -1,17 +1,18 @@
 """Task Three solution module."""
 
 from collections import defaultdict
+from bisect import bisect_left
 
 
 def solve(input_path: str) -> int | str | float:
     """
     Solve Task Three for the Coday coding competition.
 
-    This function reads input from a file, processes it according to the task
-    requirements, and returns the computed result.
-
-    Optimized approach using hash maps to avoid O(m²) worst case by grouping
-    references by their source book.
+    Optimal O(m log m) solution using binary search and dynamic programming.
+    
+    For each destination book, we maintain a sorted list of (word_count, dp_value)
+    pairs. When processing a new reference, we binary search to find the best
+    previous reference with fewer words.
 
     Args:
         input_path: Path to the input file containing test data.
@@ -33,28 +34,41 @@ def solve(input_path: str) -> int | str | float:
     if m == 0:
         return 0
     
-    # Group references by destination book for O(1) lookup
-    # dest_book -> list of (index, word_count) tuples
-    by_dest = defaultdict(list)
-    references = []
-    
-    for i in range(m):
-        book_from, book_to, words = map(int, lines[i + 1].split())
-        references.append((book_from, book_to, words))
-        by_dest[book_to].append((i, words))
-    
-    # Dynamic programming: dp[i] = maximum chain length ending at reference i
-    dp = [1] * m
+    # For each book, maintain list of (word_count, max_dp_value) in sorted order
+    # This allows binary search for best previous reference
+    book_state = defaultdict(list)
     max_length = 1
     
     for i in range(m):
-        from_i, to_i, words_i = references[i]
+        book_from, book_to, words = map(int, lines[i + 1].split())
         
-        # Only check references that end at our starting book
-        for j, words_j in by_dest[from_i]:
-            # Must be earlier in catalogue and have fewer words
-            if j < i and words_j < words_i:
-                dp[i] = max(dp[i], dp[j] + 1)
-                max_length = max(max_length, dp[i])
+        # Find best previous reference ending at book_from with words < current
+        state = book_state[book_from]
+        dp_value = 1
+        
+        if state:
+            # Binary search for largest word_count < words
+            idx = bisect_left(state, (words, float('inf'))) - 1
+            if idx >= 0:
+                dp_value = state[idx][1] + 1
+        
+        max_length = max(max_length, dp_value)
+        
+        # Update state for book_to
+        dest_state = book_state[book_to]
+        
+        # Maintain invariant: increasing word_count AND increasing dp_value
+        # Remove entries that would be dominated by this new entry
+        # An entry (w, d) is dominated if w >= words and d <= dp_value
+        while dest_state and dest_state[-1][0] >= words:
+            if dest_state[-1][1] <= dp_value:
+                dest_state.pop()
+            else:
+                # Can't add this entry - it's dominated
+                break
+        else:
+            # Only add if it extends the Pareto frontier
+            if not dest_state or dest_state[-1][1] < dp_value:
+                dest_state.append((words, dp_value))
     
     return max_length
