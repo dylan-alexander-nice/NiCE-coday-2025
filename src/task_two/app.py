@@ -1,5 +1,6 @@
 from collections import Counter
 from typing import List, Union
+import numpy as np
 
 
 def longest_harmonized_group_one_array(crystals: List[int]) -> int:
@@ -11,61 +12,63 @@ def longest_harmonized_group_one_array(crystals: List[int]) -> int:
     types = list(freq.keys())
     c = len(types)
 
-    # Base answer: all of one type (covers A == B and k = 0)
+    # Base answer: all of one type
     ans = max(freq.values())
 
-    # Compress values to 0..c-1
+    # Compress values to 0..c-1 for array indexing
     type_id = {v: i for i, v in enumerate(types)}
     arr_ids = [type_id[x] for x in crystals]
 
+    # Build positions for each type
     positions = [[] for _ in range(c)]
     for idx, t in enumerate(arr_ids):
         positions[t].append(idx)
 
+    # For each crystal type that appears at least twice
     for a_id in range(c):
         posA = positions[a_id]
         total_A = len(posA)
-        if total_A <= 1:
+        if total_A < 2:
             continue
 
-        left_idx = posA[0]
-        right_idx = posA[-1]
-
-        if right_idx - left_idx <= 1:
-            continue  # no middle segment
-
-        # Count all types in initial middle (left_idx, right_idx)
-        middle_counts = [0] * c
-        for i in range(left_idx + 1, right_idx):
-            middle_counts[arr_ids[i]] += 1
-
-        l_ptr = 0
-        r_ptr = total_A - 1
         max_k = total_A // 2
 
+        # Start with k=1 (widest span)
+        left_idx = 0
+        right_idx = total_A - 1
+        left_pos = posA[left_idx]
+        right_pos = posA[right_idx]
+
+        # Build initial middle counter using numpy array (faster than list)
+        middle_counts = np.zeros(c, dtype=np.int32)
+        for i in range(left_pos + 1, right_pos):
+            middle_counts[arr_ids[i]] += 1
+
+        # Process all k values
         for k in range(1, max_k + 1):
-            max_middle = max(middle_counts) if middle_counts else 0
+            # Use numpy's optimized max
+            max_middle = int(np.max(middle_counts))
             cand = 2 * k + max_middle
-            if cand > ans:
-                ans = cand
+            ans = max(ans, cand)
 
             if k == max_k:
                 break
 
-            # shrink from the left
-            old_left = posA[l_ptr]
-            new_left = posA[l_ptr + 1]
-            for i in range(old_left + 1, new_left + 1):
+            # Remove crystals from left boundary
+            old_left_pos = posA[left_idx]
+            left_idx += 1
+            new_left_pos = posA[left_idx]
+
+            for i in range(old_left_pos + 1, new_left_pos + 1):
                 middle_counts[arr_ids[i]] -= 1
 
-            # shrink from the right (FIXED)
-            old_right = posA[r_ptr]
-            new_right = posA[r_ptr - 1]
-            for i in range(new_right, old_right):
-                middle_counts[arr_ids[i]] -= 1
+            # Remove crystals from right boundary
+            old_right_pos = posA[right_idx]
+            right_idx -= 1
+            new_right_pos = posA[right_idx]
 
-            l_ptr += 1
-            r_ptr -= 1
+            for i in range(new_right_pos, old_right_pos):
+                middle_counts[arr_ids[i]] -= 1
 
     return ans
 
