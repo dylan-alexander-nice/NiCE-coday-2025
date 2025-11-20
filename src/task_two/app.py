@@ -4,67 +4,62 @@ from typing import List, Union
 
 def longest_harmonized_group_one_array(crystals: List[int]) -> int:
     n = len(crystals)
-    if n <= 1:
-        return n
+    if n == 0:
+        return 0
 
-    # Using a dictionary for frequencies is generally faster than Counter for this specific case
-    freq = {}
-    for x in crystals:
-        freq[x] = freq.get(x, 0) + 1
+    # Store indices for each crystal type
+    positions = {}
+    for i, crystal_type in enumerate(crystals):
+        if crystal_type not in positions:
+            positions[crystal_type] = []
+        positions[crystal_type].append(i)
+
+    crystal_types = list(positions.keys())
 
     # Base answer: all of one type
     ans = 0
-    if freq:
-        ans = max(freq.values())
+    for t in crystal_types:
+        ans = max(ans, len(positions[t]))
 
-    types = list(freq.keys())
-    c = len(types)
-    if c <= 1:
-        return ans
-
-    # Value compression to integer IDs
-    type_id = {v: i for i, v in enumerate(types)}
-    arr_ids = [type_id[x] for x in crystals]
-
-    # Store indices for each crystal type
-    positions = [[] for _ in range(c)]
-    for idx, t in enumerate(arr_ids):
-        positions[t].append(idx)
-
-    # Precompute prefix counts for all types
-    prefix_counts = [[0] * c for _ in range(n + 1)]
-    for i in range(n):
-        for j in range(c):
-            prefix_counts[i+1][j] = prefix_counts[i][j]
-        prefix_counts[i+1][arr_ids[i]] += 1
-
-    for a_id in range(c):
-        pos_A = positions[a_id]
-        total_A = len(pos_A)
-        if total_A <= 1:
+    # Case where we have two different types, A and B
+    for type_a in crystal_types:
+        pos_a = positions[type_a]
+        if len(pos_a) < 2:
             continue
 
-        for k in range(1, total_A // 2 + 1):
-            left_idx = pos_A[k-1]
-            right_idx = pos_A[total_A-k]
-
-            if left_idx >= right_idx:
+        for type_b in crystal_types:
+            if type_a == type_b:
                 continue
 
-            # Calculate counts of types in the middle segment using precomputed prefixes
-            # This is the core optimization
-            max_middle = 0
-            
-            # The middle part can be of any type, including type A.
-            if right_idx > left_idx + 1:
-                for b_id in range(c):
-                    count_b_middle = prefix_counts[right_idx][b_id] - prefix_counts[left_idx+1][b_id]
-                    if count_b_middle > max_middle:
-                        max_middle = count_b_middle
-            
-            cand = 2 * k + max_middle
-            if cand > ans:
-                ans = cand
+            pos_b = positions.get(type_b, [])
+            if not pos_b:
+                continue
+
+            # Create a prefix sum array for type_b counts
+            b_counts = [0] * (n + 1)
+            b_idx = 0
+            for i in range(n):
+                b_counts[i+1] = b_counts[i]
+                if b_idx < len(pos_b) and pos_b[b_idx] == i:
+                    b_counts[i+1] += 1
+                    b_idx += 1
+
+            # Use two pointers on pos_a array
+            l, r = 0, len(pos_a) - 1
+            while l < r:
+                start_a_idx = pos_a[l]
+                end_a_idx = pos_a[r]
+
+                # Number of B's between the two A's
+                middle_b_count = b_counts[end_a_idx] - b_counts[start_a_idx + 1]
+
+                # k is the number of A's on each side
+                k = l + 1
+
+                ans = max(ans, 2 * k + middle_b_count)
+
+                l += 1
+                r -= 1
 
     return ans
 
