@@ -1,9 +1,9 @@
 from collections import Counter
-from typing import List, Union
+
 import numpy as np
 
 
-def longest_harmonized_group_one_array(crystals: List[int]) -> int:
+def longest_harmonized_group_one_array(crystals: list[int]) -> int:
     n = len(crystals)
     if n == 0:
         return 0
@@ -26,18 +26,18 @@ def longest_harmonized_group_one_array(crystals: List[int]) -> int:
 
     # For each crystal type that appears at least twice
     for a_id in range(c):
-        posA = positions[a_id]
-        total_A = len(posA)
-        if total_A < 2:
+        pos_a = positions[a_id]
+        total_a = len(pos_a)
+        if total_a < 2:
             continue
 
-        max_k = total_A // 2
+        max_k = total_a // 2
 
         # Start with k=1 (widest span)
         left_idx = 0
-        right_idx = total_A - 1
-        left_pos = posA[left_idx]
-        right_pos = posA[right_idx]
+        right_idx = total_a - 1
+        left_pos = pos_a[left_idx]
+        right_pos = pos_a[right_idx]
 
         # Build initial middle counter using numpy array (faster than list)
         middle_counts = np.zeros(c, dtype=np.int32)
@@ -55,17 +55,17 @@ def longest_harmonized_group_one_array(crystals: List[int]) -> int:
                 break
 
             # Remove crystals from left boundary
-            old_left_pos = posA[left_idx]
+            old_left_pos = pos_a[left_idx]
             left_idx += 1
-            new_left_pos = posA[left_idx]
+            new_left_pos = pos_a[left_idx]
 
             for i in range(old_left_pos + 1, new_left_pos + 1):
                 middle_counts[arr_ids[i]] -= 1
 
             # Remove crystals from right boundary
-            old_right_pos = posA[right_idx]
+            old_right_pos = pos_a[right_idx]
             right_idx -= 1
-            new_right_pos = posA[right_idx]
+            new_right_pos = pos_a[right_idx]
 
             for i in range(new_right_pos, old_right_pos):
                 middle_counts[arr_ids[i]] -= 1
@@ -73,7 +73,7 @@ def longest_harmonized_group_one_array(crystals: List[int]) -> int:
     return ans
 
 
-def solve(inputPath: str) -> Union[int, float, str, List[int]]:
+def solve(input_path: str) -> int | float | str | list[int]:
     """
     Solve Task Two for all arrays in the input file.
 
@@ -88,15 +88,15 @@ def solve(inputPath: str) -> Union[int, float, str, List[int]]:
     Returns:
         List[int] of answers (one per array).
     """
-    with open(inputPath, "r", encoding="utf-8") as f:
+    with open(input_path, encoding="utf-8") as f:
         lines = f.readlines()
 
     t = int(lines[0].strip())
     line_idx = 1
-    results: List[int] = []
+    results: list[int] = []
 
     for _ in range(t):
-        size = int(lines[line_idx].strip())
+        _ = int(lines[line_idx].strip())  # size unused but in format
         arr = list(map(int, lines[line_idx + 1].split()))
         line_idx += 2
 
