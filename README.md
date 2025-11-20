@@ -2,12 +2,15 @@
 
 # ⚡ NiCE Coday 2025 - Prometheus
 
-**Solo Victory: Competing Against 60+ Teams**
+**Solo Competitor | 40th Overall | #1 Python Performance (Tasks 1 & 2)**
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![Competition Date](https://img.shields.io/badge/date-November%2019%2C%202025-green.svg)]()
 [![Team](https://img.shields.io/badge/team-Prometheus%20(Solo)-red.svg)]()
 [![Division](https://img.shields.io/badge/division-RDI-orange.svg)]()
+[![Overall Rank](https://img.shields.io/badge/rank-40%2F110%20teams-blue.svg)]()
+
+🥇 **Best Python - Task 1** | 🥇 **Best Python - Task 2** | 🥉 **3rd Python - Task 3**
 
 *Solutions and test framework for NiCE's internal algorithmic competition*
 
@@ -21,11 +24,25 @@
 
 **Competition Stats:**
 - **Date:** November 19, 2025
-- **Format:** 3 tasks, time-boxed contest
-- **Participants:** 60+ teams (4-5 members each) + 1 solo competitor
+- **Format:** 3 tasks, time-boxed contest, multi-language support (C#, Java, Python)
+- **Participants:** 110 teams total (~90% team entries of 4-5 members, ~10% solo)
+- **Scoring:** Language-specific benchmarking (5 tests per task, relative to language baseline)
 - **Solo Team:** **Prometheus** (RDI Division)
 
+**Final Results:**
+- **Overall Placement:** 40th of 110 teams
+- **Python Rankings:** 🥇 1st (Task 1), 🥇 1st (Task 2), 🥉 3rd (Task 3)
+
 This repository contains complete solutions, comprehensive test suites, and the original problem statements for all three tasks.
+
+### Language Choice: Python vs Compiled Languages
+
+All tasks could be solved in **C#, Java, or Python**. Choosing Python offered faster development and cleaner algorithm expression, but came with a performance ceiling—compiled languages (C# and Java) dominated the top of the overall leaderboard due to inherent runtime advantages.
+
+**The Tradeoff:**
+- ✅ **Python Advantage:** Rapid prototyping, expressive syntax, rich standard library
+- ❌ **Python Limitation:** Dynamic typing and interpreter overhead cap maximum performance
+- 🎯 **Result:** Despite Python's speed ceiling, algorithmic optimization enabled competitive performance within the language category
 
 ---
 
@@ -33,11 +50,11 @@ This repository contains complete solutions, comprehensive test suites, and the 
 
 Each task is wrapped in a rich narrative, but the algorithmic core is pure competitive programming:
 
-| Task | Title | Difficulty | Core Algorithm | Complexity |
-|------|-------|-----------|----------------|------------|
-| **1** | The Taverns of NiCE Realm | 🟢 **Easy** | Two-Pointer Sweep | O(n log n + m log m) |
-| **2** | Harmonized Crystals | 🟡 **Medium** | Dynamic Sliding Window | O(n² × k) worst case |
-| **3** | The Longest Story | 🔴 **Hard** | DP + Binary Search | O(m log m) |
+| Task | Title | Difficulty | Core Algorithm | Complexity | Score | Python Rank |
+|------|-------|-----------|----------------|------------|-------|-------------|
+| **1** | The Taverns of NiCE Realm | 🟢 **Easy** | Two-Pointer Sweep | O(n log n + m log m) | 5,991 pts | 🥇 **1st** |
+| **2** | Harmonized Crystals | 🟡 **Medium** | Dynamic Sliding Window | O(n² × k) worst case | 10,774 pts | 🥇 **1st** |
+| **3** | The Longest Story | 🔴 **Hard** | DP + Binary Search | O(m log m) | 5,991 pts | 🥉 **3rd** |
 
 ### Task 1: Maximum Minimum Distance (Taverns) 🏛️
 
@@ -144,56 +161,21 @@ NiCE-coday-2025/
 
 ## 🚀 Quick Start
 
-### Prerequisites
-
-- **Python 3.12+** (uses modern type hints and performance optimizations)
-- `pip` package manager
-
-### Installation
+**Prerequisites:** Python 3.12+
 
 ```powershell
-# Clone the repository
+# Clone and install
 git clone https://github.com/dylan-alexander-nice/NiCE-coday-2025.git
 cd NiCE-coday-2025
-
-# Install dependencies
 pip install -e .
-```
 
-### Running Solutions
+# Run tests
+pytest                    # All tests
+pytest tests/task_one/    # Specific task
+make test                 # Via Makefile
 
-Each task has a `solve()` function that reads input from a file:
-
-```python
-from src.task_one.app import solve
-
-# Run with test input
-result = solve("src/task_one/Resources/Test0.txt")
-print(result)
-```
-
-### Running Tests
-
-```powershell
-# Run all tests
-pytest
-
-# Run specific task tests
-pytest tests/task_one/
-pytest tests/task_two/
-pytest tests/task_three/
-
-# Run with coverage report
-pytest --cov=src --cov-report=html
-```
-
-### Using Make Commands
-
-```powershell
-make test      # Run all tests
-make coverage  # Generate coverage report
-make lint      # Check code quality
-make format    # Format code
+# Run a solution
+python -c "from src.task_one.app import solve; print(solve('src/task_one/Resources/Test0.txt'))"
 ```
 
 ---
@@ -276,18 +258,49 @@ book_state[book_to].insert_sorted((words, new_dp))
 
 ---
 
-## 📊 Performance Characteristics
+## 📊 Competition Results & Performance
 
-| Task | Input Size | Time Complexity | Space Complexity | Bottleneck |
-|------|-----------|----------------|------------------|------------|
-| **1** | n, m ≤ 10⁵ | O(n log n + m log m) | O(n) | Sorting |
-| **2** | n ≤ 10⁵ | O(k² × n) | O(n × k) | Type enumeration |
-| **3** | m ≤ 10⁵ | O(m log m) | O(n × m) worst | Binary search |
+### Final Standings
+
+| Metric | Result |
+|--------|--------|
+| **Overall Rank** | 40th of 110 teams |
+| **Python Rank (Task 1)** | 🥇 1st place |
+| **Python Rank (Task 2)** | 🥇 1st place |
+| **Python Rank (Task 3)** | 🥉 3rd place |
+| **Total Score** | 22,756 points |
+| **Team Composition** | Solo (vs 90% multi-member teams) |
+
+### Scoring System
+
+Each task was evaluated using **5 benchmark tests** with language-specific baselines:
+- Submissions competed **within their language category** (Python vs Python, C# vs C#, etc.)
+- Points awarded based on time and space efficiency relative to language baseline
+- Same input data used across all languages, but scoring normalized per language
+
+### Performance Characteristics
+
+| Task | Input Size | Time Complexity | Space Complexity | Points | Python Rank |
+|------|-----------|----------------|------------------|--------|-------------|
+| **1** | n, m ≤ 10⁵ | O(n log n + m log m) | O(n) | 5,991 | 🥇 1st |
+| **2** | n ≤ 10⁵ | O(k² × n) | O(n × k) | 10,774 | 🥇 1st |
+| **3** | m ≤ 10⁵ | O(m log m) | O(n × m) worst | 5,991 | 🥉 3rd |
 
 **All solutions pass test suites with:**
 - ✅ Edge cases (empty inputs, single elements)
 - ✅ Large inputs (stress tests near constraints)
 - ✅ Worst-case scenarios (all elements identical, fully connected graphs)
+
+### Python vs Compiled Languages
+
+**Observations:**
+- Top overall rankings dominated by C# and Java (10,000+ points on Task 1 vs ~6,000 for Python)
+- Python's performance ceiling ~40-60% of compiled language potential on compute-heavy tasks
+- Algorithmic optimization maximized within Python's constraints
+- Despite interpreter overhead, Python achieved competitive results through:
+  - Efficient use of built-in functions (`bisect`, `sorted`, `collections`)
+  - Minimizing object creation and dynamic lookups
+  - Strategic use of list comprehensions vs explicit loops
 
 ---
 
@@ -320,11 +333,28 @@ book_state[book_to].insert_sorted((words, new_dp))
 
 ## 🏆 Competition Tips
 
+### General Strategy
 1. **Read carefully:** Problem constraints often hint at the intended complexity
 2. **Start simple:** Brute force first, optimize second
 3. **Test edge cases:** Empty inputs, single elements, duplicates
 4. **Complexity analysis:** Know your Big-O before implementing
 5. **Clean code matters:** Even in competition, readable code = debuggable code
+
+### Language Selection
+
+**Choose Python when:**
+- ✅ Development speed is critical (time-boxed contests)
+- ✅ Algorithm complexity dominates runtime (graph problems, DP)
+- ✅ Built-in data structures provide significant advantages (`Counter`, `defaultdict`, `bisect`)
+- ✅ Code clarity helps with debugging under pressure
+
+**Choose C#/Java when:**
+- ✅ Pure computational performance matters (math-heavy, tight loops)
+- ✅ You need raw speed on large inputs (10⁵+ elements)
+- ✅ Comfortable with verbose syntax for marginal performance gains
+- ✅ Targeting top overall leaderboard positions
+
+**Key Takeaway:** In language-agnostic competitions, optimal algorithm choice matters more than language choice. Master one language deeply rather than switching based on problem type.
 
 ---
 
