@@ -13,110 +13,53 @@ any traveler must walk from their city to reach the nearest tavern.
 
 def solve(inputPath: str) -> int | str | float:
     """
-    Optimal Solution using Binary Search.
-    
-    Key Insight: For any city, the nearest tavern is either:
-    - The largest tavern ≤ city (left neighbor)
-    - The smallest tavern ≥ city (right neighbor)
-    
-    By sorting taverns, we can use binary search to find these candidates
-    in O(log m) time instead of checking all taverns O(m).
-    
-    Time Complexity: O(m log m + n log m) where n = cities, m = taverns
+    Optimal solution using a two-pointer approach.
+
+    Key Insight: By sorting both cities and taverns, we can find the nearest
+    tavern for each city in a single pass (O(n+m)). The overall complexity
+    is dominated by the sorting step.
+
+    This approach is generally faster than binary searching for each city
+    because it has better data locality and avoids the overhead of repeated
+    search function calls.
+
+    Time Complexity: O(n log n + m log m) where n = cities, m = taverns
     Space Complexity: O(n) for storing unique cities
-    
-    Args:
-        inputPath: Path to the input file containing test data.
-    Returns:
-        The maximum distance from any city to its nearest tavern (integer).
-    """
-    import bisect
-    
-    with open(inputPath, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-
-    # Parse input
-    num_cities = int(lines[0].strip())
-    city_positions = list(map(int, lines[1].strip().split()))
-    num_taverns = int(lines[2].strip())
-    tavern_positions = list(map(int, lines[3].strip().split()))
-
-    # Sort taverns for binary search - O(m log m)
-    taverns = sorted(tavern_positions)
-    
-    # Remove duplicate cities - O(n)
-    unique_cities = set(city_positions)
-    
-    # Track maximum distance
-    max_distance = 0
-    
-    # For each city, find nearest tavern using binary search - O(n log m)
-    for city in unique_cities:
-        # Binary search for insertion point
-        # idx is where 'city' would be inserted to keep array sorted
-        idx = bisect.bisect_left(taverns, city)
-        
-        # Find minimum distance to nearest tavern
-        min_distance = float('inf')
-        
-        # Check right neighbor: tavern at or after city position
-        if idx < len(taverns):
-            min_distance = min(min_distance, abs(taverns[idx] - city))
-        
-        # Check left neighbor: tavern before city position
-        if idx > 0:
-            min_distance = min(min_distance, abs(taverns[idx - 1] - city))
-        
-        # Update maximum of all minimum distances
-        max_distance = max(max_distance, min_distance)
-    
-    return max_distance
-
-
-def brute_force_solve(inputPath: str) -> int | str | float:
-    """
-    Approach (Brute Force):
-    1. Parse input to get city and tavern positions
-    2. For each city, find the minimum distance to any tavern
-    3. Return the maximum of all these minimum distances
-
-    Time Complexity: O(n * m) where n = cities, m = taverns
-    Space Complexity: O(1) (ignoring input storage)
 
     Args:
         inputPath: Path to the input file containing test data.
     Returns:
         The maximum distance from any city to its nearest tavern (integer).
-
-    Example:
-        Cities: [1, 2, 4, 6, 7, 9]
-        Taverns: [0, 1, 3, 6, 7, 8, 9, 10]
-        Output: 1 (city at position 2 or 4 is 1 unit from nearest tavern)
     """
     with open(inputPath, "r", encoding="utf-8") as f:
         lines = f.readlines()
 
     # Parse input
-    num_cities = int(lines[0].strip())
     city_positions = list(map(int, lines[1].strip().split()))
-    num_taverns = int(lines[2].strip())
     tavern_positions = list(map(int, lines[3].strip().split()))
 
-    # Remove duplicates - multiple cities at same position have same nearest tavern
-    unique_cities = set(city_positions)
+    # Sort unique cities and taverns
+    cities = sorted(list(set(city_positions)))
+    taverns = sorted(list(set(tavern_positions)))
 
-    # Brute Force: For each city, find minimum distance to any tavern
-    max_distance = 0
+    max_dist = 0
+    tavern_ptr = 0
 
-    for city in unique_cities:
-        # Find the nearest tavern to this city
-        min_distance = float("inf")
+    for city in cities:
+        # Advance tavern pointer to find the segment containing the city
+        while tavern_ptr < len(taverns) - 1 and taverns[tavern_ptr + 1] <= city:
+            tavern_ptr += 1
 
-        for tavern in tavern_positions:
-            distance = abs(city - tavern)
-            min_distance = min(min_distance, distance)
+        # Distance to the tavern at or before the city
+        dist1 = abs(city - taverns[tavern_ptr])
+        
+        min_dist = dist1
 
-        # Track the maximum of all minimum distances
-        max_distance = max(max_distance, min_distance)
+        # If there's a next tavern, consider it as well
+        if tavern_ptr + 1 < len(taverns):
+            dist2 = abs(city - taverns[tavern_ptr + 1])
+            min_dist = min(dist1, dist2)
 
-    return max_distance
+        max_dist = max(max_dist, min_dist)
+
+    return max_dist
