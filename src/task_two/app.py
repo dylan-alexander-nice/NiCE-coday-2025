@@ -4,68 +4,67 @@ from typing import List, Union
 
 def longest_harmonized_group_one_array(crystals: List[int]) -> int:
     n = len(crystals)
-    if n == 0:
-        return 0
+    if n <= 1:
+        return n
 
-    freq = Counter(crystals)
+    # Using a dictionary for frequencies is generally faster than Counter for this specific case
+    freq = {}
+    for x in crystals:
+        freq[x] = freq.get(x, 0) + 1
+
+    # Base answer: all of one type
+    ans = 0
+    if freq:
+        ans = max(freq.values())
+
     types = list(freq.keys())
     c = len(types)
+    if c <= 1:
+        return ans
 
-    # Base answer: all of one type (covers A == B and k = 0)
-    ans = max(freq.values())
-
-    # Compress values to 0..c-1
+    # Value compression to integer IDs
     type_id = {v: i for i, v in enumerate(types)}
     arr_ids = [type_id[x] for x in crystals]
 
+    # Store indices for each crystal type
     positions = [[] for _ in range(c)]
     for idx, t in enumerate(arr_ids):
         positions[t].append(idx)
 
+    # Precompute prefix counts for all types
+    prefix_counts = [[0] * c for _ in range(n + 1)]
+    for i in range(n):
+        for j in range(c):
+            prefix_counts[i+1][j] = prefix_counts[i][j]
+        prefix_counts[i+1][arr_ids[i]] += 1
+
     for a_id in range(c):
-        posA = positions[a_id]
-        total_A = len(posA)
+        pos_A = positions[a_id]
+        total_A = len(pos_A)
         if total_A <= 1:
             continue
 
-        left_idx = posA[0]
-        right_idx = posA[-1]
+        for k in range(1, total_A // 2 + 1):
+            left_idx = pos_A[k-1]
+            right_idx = pos_A[total_A-k]
 
-        if right_idx - left_idx <= 1:
-            continue  # no middle segment
+            if left_idx >= right_idx:
+                continue
 
-        # Count all types in initial middle (left_idx, right_idx)
-        middle_counts = [0] * c
-        for i in range(left_idx + 1, right_idx):
-            middle_counts[arr_ids[i]] += 1
-
-        l_ptr = 0
-        r_ptr = total_A - 1
-        max_k = total_A // 2
-
-        for k in range(1, max_k + 1):
-            max_middle = max(middle_counts) if middle_counts else 0
+            # Calculate counts of types in the middle segment using precomputed prefixes
+            # This is the core optimization
+            max_middle = 0
+            
+            # The middle part can be of any type, including type A.
+            if right_idx > left_idx + 1:
+                for b_id in range(c):
+                    count_b_middle = prefix_counts[right_idx][b_id] - prefix_counts[left_idx+1][b_id]
+                    if count_b_middle > max_middle:
+                        max_middle = count_b_middle
+            
             cand = 2 * k + max_middle
             if cand > ans:
                 ans = cand
-
-            if k == max_k:
-                break
-
-            # shrink from the left
-            old_left = posA[l_ptr]
-            new_left = posA[l_ptr + 1]
-            for i in range(old_left + 1, new_left + 1):
-                middle_counts[arr_ids[i]] -= 1
-
-            # shrink from the right (FIXED)
-            old_right = posA[r_ptr]
-            new_right = posA[r_ptr - 1]
-            for i in range(new_right, old_right):
-                middle_counts[arr_ids[i]] -= 1
-
-            l_ptr += 1
-            r_ptr -= 1
 
     return ans
 
