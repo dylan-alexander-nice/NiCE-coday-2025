@@ -48,7 +48,7 @@ def solve(input_path: str) -> int | str | float:
         
         if state:
             # Binary search for largest word_count < words
-            idx = bisect_left(state, (words, float('inf'))) - 1
+            idx = bisect_left(state, (words, float('-inf'))) - 1
             if idx >= 0:
                 dp_value = state[idx][1] + 1
         
@@ -57,14 +57,24 @@ def solve(input_path: str) -> int | str | float:
         # Update state for book_to
         dest_state = book_state[book_to]
         
-        # Maintain Pareto frontier: strictly increasing word_count AND dp_value
-        # Remove entries dominated by (words, dp_value)
-        while dest_state and dest_state[-1][0] >= words and dest_state[-1][1] <= dp_value:
-            dest_state.pop()
-        
-        # Add ONLY if it strictly improves the Pareto frontier
-        # Both word_count AND dp_value must be better than all previous entries
-        if not dest_state or (dest_state[-1][0] < words and dest_state[-1][1] < dp_value):
-            dest_state.append((words, dp_value))
+        # Find insertion point for new state
+        idx = bisect_left(dest_state, (words, dp_value))
+
+        # If there's a state with the same word count, it must have a smaller dp_value
+        # because we are processing in order. We can just update it.
+        if idx < len(dest_state) and dest_state[idx][0] == words:
+            dest_state[idx] = (words, dp_value)
+        # If the new state is dominated, we ignore it
+        elif idx > 0 and dest_state[idx-1][1] >= dp_value:
+            continue
+        else:
+            # Insert the new state
+            dest_state.insert(idx, (words, dp_value))
+
+        # Remove states that are now dominated by the new state
+        # These will be to the right of the inserted state
+        j = idx + 1
+        while j < len(dest_state) and dest_state[j][1] <= dp_value:
+            dest_state.pop(j)
     
     return max_length
